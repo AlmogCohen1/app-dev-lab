@@ -3,7 +3,7 @@ ReplicaNumber: 1
 
 containers:
   containerPort: 8080
-  image: 'quay.io/303051726/myproject'
+  image: 'quay.io/almog1099/helloalmog'
   tag: 'chart_v1'
   livenesspath: /health/liveliness
   readinesspath: /health/readiness
