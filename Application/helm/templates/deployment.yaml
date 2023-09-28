@@ -95,7 +95,7 @@ spec:
           - name: index-html
             mountPath: /tmp/html # this will mount the html.index file to it application location
           readinessProbe:
-            {{- tpl (toYaml .Values.Probes.readiness) . | nindent 12 }}          
+      {{- tpl (toYaml .Values.Probes.readiness) . | nindent 12 }}          
             # httpGet:
             #   path: {{ .Values.probes.readiness.path }}              
             #   port: {{ .Values.containers.containerPort  }} # In which port the Application is listening
