@@ -1,15 +1,18 @@
 kind: Deployment
 apiVersion: apps/v1
 metadata:
+# set your lab user name
   name: {{ .Release.Name }}
 spec:
   replicas: {{ .Values.ReplicaNumber }}
   selector:
-    matchLabels:
+    matchLabels: 
+# set your lab user name
       app: {{ .Release.Name }}
   template:
     metadata:
       labels:
+# set your lab user name
         app: {{ .Release.Name }}
     spec:
       volumes:
@@ -19,16 +22,19 @@ spec:
             defaultMode: 420
       containers:
         - resources: {}
+          volumeMounts:
+          - name: index-html
+            mountPath: /tmp/html # this will mount the html.index file to it application location
           readinessProbe:
             httpGet:
-              path: {{ .Values.probes.readiness.path }} # this check the application url path
+              path: {{ .Values.probes.readiness.path }}
               port: {{ .Values.containers.containerPort  }} # In which port the Application is listening
               scheme: HTTP
-            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }} # the time is waiting befor testing the application path
-            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }} # the time for timeout
-            periodSeconds: {{ .Values.probes.readiness.periodSeconds }} # the abount of time to wait between checks
-            successThreshold: {{ .Values.probes.readiness.successThreshold }} # count to decalre seccessfull 
-            failureThreshold: {{ .Values.probes.readiness.failureThreshold }} # count to decalre failure
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            successThreshold: {{ .Values.probes.readiness.successThreshold }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
           livenessProbe:
             httpGet:
               path: {{ .Values.probes.liveness.path }}
@@ -42,18 +48,14 @@ spec:
           env:
             - name: PORT
               value: {{ .Values.containers.containerPort | quote }}
-          volumeMounts:
-          - name: index-html
-            mountPath: /tmp/html
           terminationMessagePath: /dev/termination-log
           name: {{ .Release.Name }}
           ports:
             - containerPort: {{ .Values.containers.containerPort }}
               protocol: TCP
-          imagePullPolicy: Always
-          terminationMessagePolicy: File
+          imagePullPolicy: IfNotPresent
+# update with the image you build in part 1
           image: {{ .Values.containers.image }}:{{ .Values.containers.tag }}
-          
       restartPolicy: Always
       terminationGracePeriodSeconds: 30
   strategy:
@@ -62,6 +64,3 @@ spec:
       maxUnavailable: 25%
       maxSurge: 25%
   revisionHistoryLimit: 10
-
-
-
