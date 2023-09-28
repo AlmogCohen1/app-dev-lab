@@ -3,6 +3,8 @@ apiVersion: apps/v1
 metadata:
 # set your lab user name
   name: {{ .Release.Name }}
+  annotations:
+        checksum/config: {{ include (print $.Template.BasePath "/ConfigMap.yaml") . | sha256sum }}
 spec:
   replicas: {{ .Values.ReplicaNumber }}
   selector:
@@ -27,13 +29,17 @@ spec:
             mountPath: {{ .Values.probes.volume.mount.path }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.containers.readiness }}
+              path: {{ .Values.containers.pathreadiness }}
               port: {{ .Values.containers.containerPort  }} # In which port the Application is listening
               scheme: HTTP
-           {{- tpl (toYaml .Values.probes.readiness) . | nindent 12 }}
+            initialDelaySeconds: {{ .Values.probes.readiness.initialDelaySeconds }}
+            timeoutSeconds: {{ .Values.probes.readiness.timeoutSeconds }}
+            periodSeconds: {{ .Values.probes.readiness.periodSeconds }}
+            successThreshold: {{ .Values.probes.readiness.successThreshold }}
+            failureThreshold: {{ .Values.probes.readiness.failureThreshold }}
           livenessProbe: 
             httpGet:
-              path: {{ .Values.containers.livenesspath }}              
+              path: {{ .Values.containers.pathliveness }}
               port: {{ .Values.containers.containerPort }}
               scheme: HTTP
            {{- tpl (toYaml .Values.probes.liveness) . | nindent 12 }}

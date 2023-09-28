@@ -1,25 +1,22 @@
-
 ReplicaNumber: 1
 
 containers:
   containerPort: 8080
   image: 'quay.io/almog1099/helloalmog'
   tag: 'chart_v1'
-  livenesspath: /health/liveliness
-  readinesspath: /health/readiness
+  pathliveness: /health/liveliness
+  pathreadiness: /health/readiness
 
 service:
   servicePort: 8080
 probes:
   readiness:
-    # path: /health/readiness
     initialDelaySeconds: 1
     timeoutSeconds: 1
     periodSeconds: 10
     successThreshold: 1
     failureThreshold: 3
   liveness:
-    # path: /health/liveliness
     initialDelaySeconds: 1
     timeoutSeconds: 1
     periodSeconds: 10
