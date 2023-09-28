@@ -6,7 +6,7 @@ containers:
   tag: 'chart_v1'
   pathliveness: /health/liveliness
   pathreadiness: /health/readiness
-
+test: Healthy
 service:
   servicePort: 8080
 probes:
@@ -25,4 +25,3 @@ probes:
   volume:
     mount:
       path: /tmp/html
-test: Healthy
